@@ -1,0 +1,134 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Lupernum</ion-title>
+    <ion-buttons slot="end">
+<!--      <ion-button id="info-button">-->
+<!--        <ion-icon name="information-circle-outline"></ion-icon>-->
+<!--      </ion-button>-->
+      <ion-button id="settings-button">
+        <ion-icon name="options-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="background">
+  <!-- TODO (frk) was default but why? -->
+<!--  <ion-header collapse="condense">-->
+<!--    <ion-toolbar>-->
+<!--      <ion-title size="large">Lupernum b</ion-title>-->
+<!--    </ion-toolbar>-->
+<!--  </ion-header>-->
+
+  <div id="container">
+    <ion-grid>
+      <!-- question -->
+      <ion-row class="ion-justify-content-center">
+        <ion-col [size]="10" id="question">
+          {{question}}
+        </ion-col>
+      </ion-row>
+      <!-- users answer -->
+      <ion-row class="ion-justify-content-center">
+        <ion-col [size]="10">
+          <ion-card>
+            <ion-card-content>
+              <!-- feedback -->
+<!--              <div #feedbackCorrect class="feedback-correct">-->
+<!--                <ion-icon name="checkmark-circle-outline"></ion-icon>-->
+<!--              </div>-->
+<!--              <div #feedbackWrong class="feedback-wrong">-->
+<!--                <ion-icon name="ban-outline"></ion-icon>-->
+<!--              </div>-->
+              <!-- /feedback -->
+              <ion-input type="number"
+                         id="answer"
+                         autofocus
+                         [(ngModel)]="answer"
+                         (keyup.enter)="check()">
+
+              </ion-input>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+      <!-- stats -->
+      <ion-row class="ion-justify-content-center">
+        <ion-col [size]="3" id="wrong-count">
+          <ion-card>
+            <ion-card-content class="stats">
+              <span class="count">{{tryCount - correctCount}}</span><br/>
+              <span class="label">wrong</span>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+        <ion-col [size]="3" id="correct-cnt">
+<!--          <ion-card>-->
+            <!-- feedback -->
+            <div #feedbackCorrect class="feedback-correct">
+              <ion-icon name="checkmark-circle-outline"></ion-icon>
+            </div>
+            <div #feedbackWrong class="feedback-wrong">
+              <ion-icon name="ban-outline"></ion-icon>
+            </div>
+            <div class="spacer">
+              <ion-icon name="ban-outline"></ion-icon>
+            </div>
+<!--          </ion-card>-->
+        </ion-col>
+        <ion-col [size]="3" id="question-cnt">
+          <ion-card>
+            <ion-card-content class="stats">
+              <span class="count">{{correctCount}}</span><br/>
+              <span class="label">correct</span>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
+
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button>
+      {{currentLevelRoman}}
+    </ion-fab-button>
+    <ion-fab-list side="top">
+      <ion-fab-button (click)="changeLevel(1)">I</ion-fab-button>
+      <ion-fab-button (click)="changeLevel(2)">II</ion-fab-button>
+      <ion-fab-button (click)="changeLevel(3)">III</ion-fab-button>
+      <ion-fab-button (click)="changeLevel(4)">IV</ion-fab-button>
+      <ion-fab-button (click)="changeLevel(5)">V</ion-fab-button>
+    </ion-fab-list>
+  </ion-fab>
+</ion-content>
+
+
+<ion-modal trigger="info-button">
+  <ng-template>
+    <lm-info></lm-info>
+  </ng-template>
+</ion-modal>
+
+
+<ion-popover trigger="settings-button" reference="event">
+  <ng-template>
+    <ion-content class="settings">
+      <ion-list>
+        <ion-item button (click)="resetStats()">
+          <ion-icon name="refresh-circle-outline" class="icon"></ion-icon>
+          <span class="label">reset statistics</span>
+        </ion-item>
+      </ion-list>
+      <ion-list>
+        <ion-list-header>Difficulty</ion-list-header>
+        <ion-item button *ngFor="let level of LEVELS; let i = index" (click)="changeLevel(i+1)">
+          <span class="icon">{{level.icon}}</span>
+          <span class="label">{{level.name}}</span>
+        </ion-item>
+      </ion-list>
+    </ion-content>
+  </ng-template>
+</ion-popover>

@@ -1,0 +1,7 @@
+{
+  "name": "Lupernum",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}

@@ -1,0 +1,36 @@
+.flex-wrapper {
+  display: flex;
+  > section {
+    flex: 1 1 auto;
+    padding: 1em;
+  }
+}
+
+table.numerals {
+  width: 100%;
+  tr {
+    td {
+      width: 50%;
+      text-align: center;
+      &:nth-child(odd) {
+        font-weight: 700;
+        font-family: "Times New Roman", sans-serif;
+      }
+    }
+  }
+}
+table.difficulty {
+  tr {
+    th {
+      text-align: left;
+    }
+    td {
+      vertical-align: middle;
+      font-family: "Times New Roman", sans-serif;
+      &:first-child {
+        text-align: left;
+        font-weight: 700;
+      }
+    }
+  }
+}
