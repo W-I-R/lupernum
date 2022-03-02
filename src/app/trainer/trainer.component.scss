@@ -25,9 +25,9 @@ ion-col {
   font-size: 4em;
   opacity: 0;
   position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
+  //left: 50%;
+  //top: 50%;
+  //transform: translate(-50%, -50%);
 }
 .feedback-correct {
   color: var(--ion-color-success);
@@ -58,6 +58,20 @@ ion-content::part(background) {
     font-size: 1em;
   }
 }
+#question-cnt {
+  .stats {
+    .count {
+      color: var(--ion-color-success);
+    }
+  }
+}
+#wrong-count {
+  .stats {
+    .count {
+      color: var(--ion-color-danger);
+    }
+  }
+}
 
 
 .settings {
@@ -66,5 +80,21 @@ ion-content::part(background) {
   }
   .label {
     padding-left: 1em;
+  }
+}
+
+#promotion {
+  color: var(--ion-color-primary-shade);
+  font-weight: bold;
+
+  ion-button {
+    .icon {
+      font-family: "Times New Roman", sans-serif;
+      font-weight: bold;
+      font-size: 2em;
+    }
+    .label {
+      padding-left: 1em;
+    }
   }
 }

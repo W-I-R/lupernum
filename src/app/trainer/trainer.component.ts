@@ -2,7 +2,7 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import * as romanize from 'romanize';
 import { Settings } from '../../settings';
 import { Storage } from '@ionic/storage-angular';
-import { Animation, AnimationController } from '@ionic/angular';
+import { Animation, AnimationController, PopoverController } from '@ionic/angular';
 
 
 @Component({
@@ -28,9 +28,12 @@ export class TrainerComponent implements OnInit {
   public questionCount: number = 0;
   public tryCount: number = 0;
   public correctCount: number = 0;
+  public score: number = 0;
+  public possibleScore: number = 0;
 
   /** current level */
   public currentLevel: number = 1;
+  /** @deprecated */
   public currentLevelRoman: string = 'I';
 
 
@@ -40,12 +43,17 @@ export class TrainerComponent implements OnInit {
   public correctAnimation: Animation;
   public wrongAnimation: Animation;
 
+
+  /** how many consecutive correct answers */
+  public combo: number = 0;
+
   @ViewChild('feedbackCorrect', { static: false }) feedbackCorrect: ElementRef;
   @ViewChild('feedbackWrong', { static: false }) feedbackWrong: ElementRef;
 
   constructor(
     private _storage: Storage, /** TODO https://github.com/ionic-team/ionic-storage#with-angular */
     private _animationCtrl: AnimationController,
+    private _popoverController: PopoverController,
   ) {}
 
   async ngOnInit() {
@@ -55,18 +63,26 @@ export class TrainerComponent implements OnInit {
     const t = await this._storage.get('tryCount');
     const c = await this._storage.get('correctCount');
     const l = await this._storage.get('currentLevel');
-    if(q) {
+    const s = await this._storage.get('score');
+    const ps = await this._storage.get('possibleScore');
+    if (q) {
       this.questionCount = q;
     }
-    if(t) {
+    if (t) {
       this.tryCount = t;
     }
-    if(c) {
+    if (c) {
       this.correctCount = c;
     }
-    if(l) {
+    if (l) {
       this.currentLevel = l;
       this.currentLevelRoman = romanize(l);
+    }
+    if (s) {
+      this.score = s;
+    }
+    if (ps) {
+      this.possibleScore = ps;
     }
 
     this.next(false);
@@ -86,16 +102,22 @@ export class TrainerComponent implements OnInit {
 
   /** check current user input (validate against question) */
   public check(): void {
-    this.tryCount++;
-    if (parseInt(this.answer, 10) === this._question) {
-      this.feedback = true;
-      this.correctAnimation.play();
-      this.correctCount++;
-      this.next();
-    } else {
-      this.wrongAnimation.play();
-      this.feedback = false;
-      this.save();
+    if (this.answer) {
+      this.tryCount++;
+      if (parseInt(this.answer, 10) === this._question) {
+        this.combo++;
+        this.feedback = true;
+        this.correctAnimation.play();
+        this.score += ((this.currentLevel * this.currentLevel));
+        this.correctCount++;
+        this.next();
+      } else {
+        this.combo = 0;
+        this.wrongAnimation.play();
+        this.score -= ((this.currentLevel * this.currentLevel));
+        this.feedback = false;
+        this.save();
+      }
     }
   }
 
@@ -103,10 +125,10 @@ export class TrainerComponent implements OnInit {
   public next(shouldSave: boolean = true): void {
     this.answer = null;
     this.questionCount++;
-
     this._newQuestion();
 
     if(shouldSave) {
+      this.possibleScore += ((this.currentLevel * this.currentLevel));
       this.save();
     }
   }
@@ -117,6 +139,8 @@ export class TrainerComponent implements OnInit {
     await this._storage.set('tryCount', this.tryCount);
     await this._storage.set('correctCount', this.correctCount);
     await this._storage.set('currentLevel', this.currentLevel);
+    await this._storage.set('score', this.score);
+    await this._storage.set('possibleScore', this.possibleScore);
   }
 
   /** TODO (frk) move to utils.ts */
@@ -140,8 +164,13 @@ export class TrainerComponent implements OnInit {
 
 
   public changeLevel(level: number): void {
+    /** close popover */
+    this._popoverController.dismiss();
+    /** change current level */
     this.currentLevel = level;
     this.currentLevelRoman = romanize(level);
+    /** reset combo */
+    this.combo = 0;
 
     this.save();
 
@@ -149,10 +178,18 @@ export class TrainerComponent implements OnInit {
   }
 
   public resetStats(): void {
+    /** reset stats */
     this.questionCount = 0;
     this.tryCount = 0;
     this.correctCount = 0;
+    this.score = 0;
+    this.possibleScore = 0;
+    /** reset combo */
+    this.combo = 0;
+    /** save */
     this.save();
+    /** close popover */
+    this._popoverController.dismiss();
   }
 }
 

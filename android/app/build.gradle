@@ -6,8 +6,8 @@ android {
         applicationId "wir.lupernum.alpha"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 18
-        versionName "0.1.0-rc2"
+        versionCode 19
+        versionName "0.1.3-alpha"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.

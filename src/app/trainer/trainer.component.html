@@ -33,20 +33,22 @@
       </ion-row>
       <!-- users answer -->
       <ion-row class="ion-justify-content-center">
-        <ion-col [size]="10">
+        <ion-col [size]="12">
           <ion-card>
             <ion-card-content>
-              <!-- feedback -->
-<!--              <div #feedbackCorrect class="feedback-correct">-->
+<!--               feedback -->
+              <div #feedbackCorrect class="feedback-correct">
 <!--                <ion-icon name="checkmark-circle-outline"></ion-icon>-->
-<!--              </div>-->
-<!--              <div #feedbackWrong class="feedback-wrong">-->
+                <ion-icon name="thumbs-up-outline"></ion-icon>
+              </div>
+              <div #feedbackWrong class="feedback-wrong">
 <!--                <ion-icon name="ban-outline"></ion-icon>-->
-<!--              </div>-->
-              <!-- /feedback -->
+                <ion-icon name="thumbs-down-outline"></ion-icon>
+              </div>
+<!--               /feedback-->
               <ion-input type="number"
                          id="answer"
-                         autofocus
+                         autofocus="true"
                          [(ngModel)]="answer"
                          (keyup.enter)="check()">
 
@@ -57,7 +59,7 @@
       </ion-row>
       <!-- stats -->
       <ion-row class="ion-justify-content-center">
-        <ion-col [size]="3" id="wrong-count">
+        <ion-col [size]="4" id="wrong-count">
           <ion-card>
             <ion-card-content class="stats">
               <span class="count">{{tryCount - correctCount}}</span><br/>
@@ -65,21 +67,31 @@
             </ion-card-content>
           </ion-card>
         </ion-col>
-        <ion-col [size]="3" id="correct-cnt">
-<!--          <ion-card>-->
-            <!-- feedback -->
-            <div #feedbackCorrect class="feedback-correct">
-              <ion-icon name="checkmark-circle-outline"></ion-icon>
-            </div>
-            <div #feedbackWrong class="feedback-wrong">
-              <ion-icon name="ban-outline"></ion-icon>
-            </div>
-            <div class="spacer">
-              <ion-icon name="ban-outline"></ion-icon>
-            </div>
-<!--          </ion-card>-->
+
+        <!-- feedback -->
+<!--        <ion-col [size]="3" id="correct-cnt">-->
+<!--          <div #feedbackCorrect class="feedback-correct">-->
+<!--            <ion-icon name="checkmark-circle-outline"></ion-icon>-->
+<!--          </div>-->
+<!--          <div #feedbackWrong class="feedback-wrong">-->
+<!--            <ion-icon name="ban-outline"></ion-icon>-->
+<!--          </div>-->
+<!--          <div class="spacer">-->
+<!--            <ion-icon name="ban-outline"></ion-icon>-->
+<!--          </div>-->
+<!--        </ion-col>-->
+
+        <!-- score -->
+        <ion-col [size]="4">
+          <ion-card>
+            <ion-card-content class="stats">
+              <span class="count">{{score}}/{{possibleScore}}</span><br/>
+              <span class="label">score / max</span>
+            </ion-card-content>
+          </ion-card>
         </ion-col>
-        <ion-col [size]="3" id="question-cnt">
+
+        <ion-col [size]="4" id="question-cnt">
           <ion-card>
             <ion-card-content class="stats">
               <span class="count">{{correctCount}}</span><br/>
@@ -88,21 +100,57 @@
           </ion-card>
         </ion-col>
       </ion-row>
+<!--      <ion-row class="ion-justify-content-center">-->
+<!--        <ion-col [size]="3">-->
+<!--          <ion-card>-->
+<!--            <ion-card-content class="stats">-->
+<!--              <span class="count">{{score}}/{{possibleScore}}</span><br/>-->
+<!--              <span class="label">score / max</span>-->
+<!--            </ion-card-content>-->
+<!--          </ion-card>-->
+<!--        </ion-col>-->
+<!--      </ion-row>-->
+
+      <ion-row class="ion-justify-content-center">
+        <ion-col [size]="12" id="promotion">
+          <ng-container *ngIf="combo >= currentLevel*5">
+            <ng-container [ngSwitch]="currentLevel">
+              <ng-container *ngFor="let level of LEVELS; let i = index">
+                <ng-container *ngIf="currentLevel<5">  <!-- don't show promotion message on last level -->
+                  <ng-container *ngSwitchCase="i+1">
+                    <p>Well done, {{level.name}}!<br/> Accept promotion to</p>
+                    <ion-button (click)="changeLevel(currentLevel+1)">
+                      <span class="icon">{{LEVELS[i+1].icon}}</span>
+                      <span class="label">{{LEVELS[i+1].name}}</span>
+                    </ion-button>
+                  </ng-container>
+                </ng-container>
+              </ng-container>
+            </ng-container>
+          </ng-container>
+        </ion-col>
+      </ion-row>
     </ion-grid>
   </div>
 
   <ion-fab vertical="bottom" horizontal="end" slot="fixed">
-    <ion-fab-button>
-      {{currentLevelRoman}}
+    <ion-fab-button (click)="check()">
+      <ion-icon name="return-down-back-outline" class="icon"></ion-icon>
     </ion-fab-button>
-    <ion-fab-list side="top">
-      <ion-fab-button (click)="changeLevel(1)">I</ion-fab-button>
-      <ion-fab-button (click)="changeLevel(2)">II</ion-fab-button>
-      <ion-fab-button (click)="changeLevel(3)">III</ion-fab-button>
-      <ion-fab-button (click)="changeLevel(4)">IV</ion-fab-button>
-      <ion-fab-button (click)="changeLevel(5)">V</ion-fab-button>
-    </ion-fab-list>
   </ion-fab>
+  <!-- TODO help/info -->
+<!--  <ion-fab vertical="bottom" horizontal="end" slot="fixed">-->
+<!--    <ion-fab-button>-->
+<!--      {{currentLevelRoman}}-->
+<!--    </ion-fab-button>-->
+<!--    <ion-fab-list side="top">-->
+<!--      <ion-fab-button (click)="changeLevel(1)">I</ion-fab-button>-->
+<!--      <ion-fab-button (click)="changeLevel(2)">II</ion-fab-button>-->
+<!--      <ion-fab-button (click)="changeLevel(3)">III</ion-fab-button>-->
+<!--      <ion-fab-button (click)="changeLevel(4)">IV</ion-fab-button>-->
+<!--      <ion-fab-button (click)="changeLevel(5)">V</ion-fab-button>-->
+<!--    </ion-fab-list>-->
+<!--  </ion-fab>-->
 </ion-content>
 
 
@@ -123,12 +171,19 @@
         </ion-item>
       </ion-list>
       <ion-list>
-        <ion-list-header>Difficulty</ion-list-header>
-        <ion-item button *ngFor="let level of LEVELS; let i = index" (click)="changeLevel(i+1)">
+        <ion-list-header>Rank</ion-list-header>
+        <ion-item button *ngFor="let level of LEVELS; let i = index" (click)="changeLevel(i+1)" [color]="currentLevel === i+1 ? 'primary' : ''">
           <span class="icon">{{level.icon}}</span>
           <span class="label">{{level.name}}</span>
         </ion-item>
       </ion-list>
+      <!-- TODO -->
+<!--      <ion-list>-->
+<!--        <ion-item (click)="open('https://github.com/W-I-R/lupernum')">-->
+<!--          <ion-icon name="logo-github"></ion-icon>-->
+<!--          <span class="label">source code</span>-->
+<!--        </ion-item>-->
+<!--      </ion-list>-->
     </ion-content>
   </ng-template>
 </ion-popover>
